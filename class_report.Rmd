@@ -33,7 +33,7 @@ difference <- enrollement_data_24 %>% mutate(add_drop_diff = total - enrollement
 
 
 # Joining using course ID
-joined_tables <- left_join(enrollement_data_24, enrollement_data_17, by = "course_id", suffix = c("_24th", "_17th")) %>% mutate(drops = total_24th - total_17th) %>% arrange(desc(drops)) %>% select(course_title_17th, drops)
+joined_tables <- left_join(enrollement_data_24, enrollement_data_17, by = "course_id", suffix = c("_24th", "_17th")) %>% mutate(drops = total_24th - total_17th) %>% arrange(desc(drops)) %>% select(course_title_17th, course_name_17th, drops)
 
 ```
 
