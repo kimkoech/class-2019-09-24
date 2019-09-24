@@ -9,15 +9,33 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse) #
 library(readxl) # package for importing data
+library(janitor) # for cleaning
 ```
 
 ## Find course with 
 
 ```{r}
-# import raw data
-file_path <- "raw-data/class_enrollment_summary_by_term_9.24.19.xlsx"
-enrollement_data <- read_xlsx(file_path, skip = 3)
+# import raw data from the 24th
+file_path_24 <- "raw-data/class_enrollment_summary_by_term_9.24.19.xlsx"
+enrollement_data_24 <- read_xlsx(file_path_24, range = cell_rows(4:2821)) %>%  clean_names()
 
+# filter for just the government courses
+government_courses <- enrollement_data_24 %>% filter(course_department == "Government") 
+
+
+# import raw data form the 17th
+file_path_17 <- "raw-data/class_enrollment_summary_by_term_9.17.19.xlsx"
+enrollement_data_17 <- read_xlsx(file_path_17, range = cell_rows(4:2821)) %>%  clean_names()
+
+
+# find the difference in total between the two tables
+difference <- enrollement_data_24 %>% mutate(add_drop_diff = total - enrollement_data_17$total) %>% select(course_title, course_name, add_drop_diff) %>% arrange(desc(add_drop_diff))
+
+
+# Joining using course ID
+joined_tables <- left_join(enrollement_data_24, enrollement_data_17, by = "course_id", suffix = c("_24th", "_17th")) %>% mutate(drops = total_24th - total_17th) %>% arrange(desc(drops)) %>% select(course_title_17th, drops)
 
 ```
+
+
 
